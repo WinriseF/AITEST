@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: AITEST
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/aitest?useSSL=false&serverTimezone=UTC
+    username: root
+    password: 123456
+  jpa:
+    database: mysql
+  ai:
+    openai:
+        api-key: sk-fogsdnpkrodjjpjikuajwodhorolqbajuvvnxqcwrqqfnkbg
+        base-url: https://api.siliconflow.cn
+        chat:
+          options:
+            model: deepseek-ai/DeepSeek-R1
