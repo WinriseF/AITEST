@@ -8,6 +8,7 @@ import org.stringtemplate.v4.ST;
 
 @SpringBootApplication
 public class AitestApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(AitestApplication.class, args);
     }

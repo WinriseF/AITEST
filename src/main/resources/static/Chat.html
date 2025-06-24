@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --bg-main: #212121;
+            --bg-secondary: #333333;
+            --text-primary: #e5e5e5;
+            --text-secondary: #b3b3b3;
+            --accent-user: #3b82f6;
+            --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+        }
+        /* 自定义滚动条样式 */
+        .chat-window::-webkit-scrollbar {
+            width: 6px; /* 滚动条宽度 */
+        }
+        .chat-window::-webkit-scrollbar-track {
+            background: transparent; /* 滚动条轨道背景透明 */
+        }
+        .chat-window::-webkit-scrollbar-thumb {
+            background-color: #555; /* 滚动条滑块颜色 */
+            border-radius: 3px; /* 滑块圆角 */
+        }
+        .chat-window::-webkit-scrollbar-thumb:hover {
+            background-color: #777; /* 鼠标悬停时滑块颜色 */
+        }
+        /* 针对火狐浏览器 */
+        .chat-window {
+            scrollbar-width: thin;
+            scrollbar-color: #555 transparent;
+        }
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: var(--font-sans);
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            max-width: 820px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* 欢迎界面 */
+        .welcome-screen {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            transition: opacity 0.3s ease;
+        }
+        .welcome-screen .logo {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, #8A2BE2, #4A00E0);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 24px auto;
+            box-shadow: 0 4px 20px rgba(138, 43, 226, 0.3);
+        }
+        .welcome-screen h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .chat-window {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .chat-window.is-chatting .welcome-screen {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .message {
+            display: flex;
+            gap: 16px;
+            max-width: 95%;
+        }
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+        .avatar svg {
+            width: 20px; height: 20px; color: #fff;
+        }
+
+        .message-content {
+            padding-top: 4px;
+            line-height: 1.7;
+            word-wrap: break-word;
+            flex-grow: 1;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        .user-message .avatar {
+            background-color: var(--accent-user);
+        }
+
+        .bot-message {
+            align-self: flex-start;
+        }
+        .bot-message .avatar {
+            background: #19c37d; /* OpenAI a shade of green */
+        }
+
+        /* Markdown 渲染优化 */
+        .message-content h1, .message-content h2, .message-content h3 { border-bottom: 1px solid #444; padding-bottom: 0.3em; margin-top: 24px; margin-bottom: 16px; font-weight: 600; }
+        .message-content p { margin: 0 0 1em; }
+        .message-content strong, .message-content b { color: #fff; font-weight: 600; }
+        .message-content ol, .message-content ul { padding-left: 24px; margin: 0 0 1em; }
+        .message-content li { margin-bottom: 0.5em; }
+        .message-content pre { background-color: #111; padding: 1em; border-radius: 8px; overflow-x: auto; border: 1px solid #444; }
+        .message-content code { font-family: "SF Mono", "Courier New", monospace; background-color: rgba(255, 255, 255, 0.1); padding: .2em .4em; border-radius: 4px; font-size: 85%; }
+        .message-content pre code { background-color: transparent; padding: 0; font-size: 100%; border: none; }
+        .message-content blockquote { border-left: 3px solid #555; padding-left: 1em; margin: 0 0 1em; color: var(--text-secondary); }
+
+        .typing-cursor::after {
+            content: '▍';
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { from, to { opacity: 1 } 50% { opacity: 0 } }
+
+        .chat-form-wrapper {
+            padding: 24px 16px;
+            background: linear-gradient(180deg, rgba(33, 33, 33, 0) 0%, var(--bg-main) 100%);
+        }
+        .chat-form {
+            display: flex;
+            max-width: 820px;
+            margin: 0 auto;
+            background-color: var(--bg-secondary);
+            border: 1px solid #555;
+            border-radius: 28px;
+            padding: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            align-items: center;
+        }
+        .chat-form input {
+            flex-grow: 1;
+            padding: 10px 12px;
+            border: none;
+            font-size: 16px;
+            background-color: transparent;
+            color: var(--text-primary);
+            outline: none;
+            font-family: var(--font-sans);
+        }
+        .chat-form button {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background-color: var(--accent-user);
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            transition: background-color 0.2s;
+            flex-shrink: 0;
+        }
+        .chat-form button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+        .chat-form button:hover:not(:disabled) {
+            background-color: #2563eb;
+        }
+        .chat-form button svg {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-window" id="chat-window">
+        <div class="welcome-screen" id="welcome-screen">
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.553l-.242 1.062-.242-1.062a3.375 3.375 0 00-2.455-2.455L13.5 18l1.061-.242a3.375 3.375 0 002.455-2.455l.242-1.062.242 1.062a3.375 3.375 0 002.455 2.455L21 18l-1.061.242a3.375 3.375 0 00-2.455 2.455z" /></svg>
+            </div>
+            <h1>您在忙什么？</h1>
+        </div>
+    </div>
+
+    <div class="chat-form-wrapper">
+        <form id="chat-form" class="chat-form">
+            <input type="text" id="message-input" placeholder="向AI发送消息..." autocomplete="off">
+            <button type="submit" title="发送" id="send-button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" /></svg>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const chatWindow = document.getElementById('chat-window');
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+    const welcomeScreen = document.getElementById('welcome-screen');
+    let isChatting = false;
+
+    chatForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const userMessage = messageInput.value.trim();
+        if (!userMessage) return;
+
+        if (!isChatting) {
+            isChatting = true;
+            chatWindow.classList.add('is-chatting');
+        }
+
+        appendMessage(userMessage, 'user');
+        messageInput.value = '';
+        sendButton.disabled = true;
+
+        const botMessageElement = appendMessage('', 'bot');
+        const botContentElement = botMessageElement.querySelector('.message-content');
+        botContentElement.classList.add('typing-cursor');
+
+        try {
+            const response = await fetch(`/chat/streamChat?msg=${encodeURIComponent(userMessage)}`);
+            if (!response.ok) throw new Error(`服务器错误: ${response.status}`);
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+            let botResponse = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                botResponse += decoder.decode(value, { stream: true });
+                botContentElement.innerHTML = marked.parse(botResponse);
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+        } catch (error) {
+            console.error('获取聊天数据时出错:', error);
+            botContentElement.innerHTML = '<p style="color: #ff6b6b;">抱歉，我好像遇到了一点问题，请稍后再试。</p>';
+        } finally {
+            botContentElement.classList.remove('typing-cursor');
+            sendButton.disabled = false;
+        }
+    });
+
+    function appendMessage(text, sender) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', `${sender}-message`);
+
+        const messageContentDiv = document.createElement('div');
+        messageContentDiv.classList.add('message-content');
+
+        if (sender === 'user') {
+            messageContentDiv.textContent = text;
+        }
+
+        const avatarDiv = document.createElement('div');
+        avatarDiv.classList.add('avatar');
+        if (sender === 'user') {
+            avatarDiv.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" /></svg>';
+        } else {
+            avatarDiv.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.553l-.242 1.062-.242-1.062a3.375 3.375 0 00-2.455-2.455L13.5 18l1.061-.242a3.375 3.375 0 002.455-2.455l.242-1.062.242 1.062a3.375 3.375 0 002.455 2.455L21 18l-1.061.242a3.375 3.375 0 00-2.455 2.455z" /></svg>';
+        }
+
+        messageElement.appendChild(avatarDiv);
+        messageElement.appendChild(messageContentDiv);
+
+        chatWindow.appendChild(messageElement);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+        return messageElement;
+    }
+</script>
+</body>
+</html>
