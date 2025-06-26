@@ -1,6 +1,12 @@
 package com.java.aitest.Controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.java.aitest.Dto.GenerateQuestionDto;
+import com.java.aitest.Entity.QuestionEntity;
+import com.java.aitest.Service.QuestionService;
+import com.java.aitest.Vo.Result;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,18 +14,35 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/question") // 类上的url映射路径
 public class QuestionController {
     @Autowired
     ChatClient chatClient;
 
+    @Autowired
+    QuestionService questionService;
     @PostMapping("generateQuestion") // 这是方法上的url映射路径
-    public String question(@RequestBody GenerateQuestionDto QuestionDto) {
-        return chatClient.prompt()
+    public String question(@RequestBody GenerateQuestionDto QuestionDto) throws JsonProcessingException {
+        String content = chatClient.prompt()
                 .system("你是一个精通各行各业的专家，擅长针对各行各业进行出题，考试，题目解析等。")
                 .user("帮我出" + QuestionDto.getQuestionNum() + "道" + QuestionDto.getQuestion() + "的题目，" + QuestionDto.getQuestionFormat())
                 .call()
                 .content();
+        content = content.replaceAll("```json", "").replace("```", "");
+        ObjectMapper mapper = new ObjectMapper();
+        List<QuestionEntity> questionEntities = mapper.readValue(content, new TypeReference<List<QuestionEntity>>() {});
+
+        Boolean bool = questionService.saveQuestion(questionEntities);
+        return content;
+    }
+    @PostMapping("asyncGenerateQuestion") // 这是方法上的url映射路径
+    public Result asyncGenerateQuestion(@RequestBody GenerateQuestionDto QuestionDto){
+        String uuid = UUID.randomUUID().toString();
+        questionService.GenerateQuestion(QuestionDto,uuid);
+        return Result.success("题目生成请求已提交", uuid);
     }
 }
