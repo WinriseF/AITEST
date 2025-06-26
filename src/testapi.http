@@ -1,0 +1,42 @@
+### HelloController
+
+# @no-log
+GET http://localhost:8080/hello
+
+### ChatController
+
+# @prompt msg
+GET http://localhost:8080/chat/chat?msg={{msg}}
+
+###
+
+# @prompt msg
+GET http://localhost:8080/chat/streamChat?msg={{msg}}
+
+
+### QuestionController
+
+# @name generateQuestion
+POST http://localhost:8080/question/generateQuestion
+Content-Type: application/json
+
+{
+  "question": "java",
+  "questionNum": 1
+}
+
+###
+
+# @name asyncGenerateQuestion
+POST http://localhost:8080/question/asyncGenerateQuestion
+Content-Type: application/json
+
+{
+  "question": "java",
+  "questionNum": 1
+}
+
+###
+
+@generateId=5c2d9439-c260-42e6-bd29-20fc818d5df4
+GET http://localhost:8080/question/question/{{generateId}}
