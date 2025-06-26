@@ -7,7 +7,9 @@ import com.java.aitest.Dao.QuestionDao;
 import com.java.aitest.Dto.GenerateQuestionDto;
 import com.java.aitest.Entity.QuestionEntity;
 import com.java.aitest.Service.QuestionService;
+import com.java.aitest.Vo.QuestionVo;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
@@ -54,5 +56,19 @@ public class QuestionServiceImpl implements QuestionService {
         questionEntities.forEach(questionEntity -> questionEntity.setGenerateId(uuid));
         saveQuestion(questionEntities);
         return AsyncResult.forValue(true); // 需要实现具体的异步逻辑
+    }
+
+    @Override
+    public List<QuestionVo> getQuestionByGenerateId(String generateId) {
+        List<QuestionEntity> questionEntities = questionDao.findQuestionEntitiesByGenerateId(generateId);
+        if(questionEntities == null || questionEntities.isEmpty()){
+            throw new RuntimeException("没有找到对应的题目");
+        }
+        List<QuestionVo> list = questionEntities.stream().map(item -> {
+            QuestionVo questionVo = new QuestionVo();
+            BeanUtils.copyProperties(item, questionVo);
+            return questionVo;
+        }).toList();
+        return list;
     }
 }

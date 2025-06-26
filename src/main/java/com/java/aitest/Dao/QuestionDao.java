@@ -4,6 +4,8 @@ import com.java.aitest.Entity.QuestionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author Winrisef
  * @see <a href="https://github.com/WinriseF">https://github.com/WinriseF</a>
@@ -12,4 +14,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface QuestionDao extends JpaRepository<QuestionEntity, Long> {
+    List<QuestionEntity> findQuestionEntitiesByGenerateId(String generateId);
 }

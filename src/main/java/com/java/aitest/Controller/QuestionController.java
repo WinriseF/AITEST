@@ -6,13 +6,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.java.aitest.Dto.GenerateQuestionDto;
 import com.java.aitest.Entity.QuestionEntity;
 import com.java.aitest.Service.QuestionService;
+import com.java.aitest.Vo.QuestionVo;
 import com.java.aitest.Vo.Result;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +23,13 @@ public class QuestionController {
 
     @Autowired
     QuestionService questionService;
+
+    /**
+     * 生成题目
+     * @param QuestionDto
+     * @return
+     * @throws JsonProcessingException
+     */
     @PostMapping("generateQuestion") // 这是方法上的url映射路径
     public String question(@RequestBody GenerateQuestionDto QuestionDto) throws JsonProcessingException {
         String content = chatClient.prompt()
@@ -39,10 +44,16 @@ public class QuestionController {
         Boolean bool = questionService.saveQuestion(questionEntities);
         return content;
     }
+
     @PostMapping("asyncGenerateQuestion") // 这是方法上的url映射路径
     public Result asyncGenerateQuestion(@RequestBody GenerateQuestionDto QuestionDto){
         String uuid = UUID.randomUUID().toString();
         questionService.GenerateQuestion(QuestionDto,uuid);
         return Result.success("题目生成请求已提交", uuid);
+    }
+    @GetMapping("question/{generateId}")
+    public Result<List<QuestionVo>> getQuestionByGenerateId(@PathVariable("generateId") String generateId) {
+        List<QuestionVo> questionVos = questionService.getQuestionByGenerateId(generateId);
+        return Result.success("查询成功", questionVos);
     }
 }
