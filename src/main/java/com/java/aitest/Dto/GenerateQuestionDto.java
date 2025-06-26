@@ -3,6 +3,7 @@ package com.java.aitest.Dto;
 public class GenerateQuestionDto {
     private String question;// 题目要求
     private Integer questionNum; // 题目数量使用postman进行请求
+    private String generateId;
     private String questionFormat = "题型为单选题，题目要求是选择题。题目要求包含题干，选项，正确答案和解析，响应的内容以json的方式进行响应，格式要求如下[\n" +
             "\t{\n" +
             "\t\tquestion:string,\n" +
@@ -22,6 +23,14 @@ public class GenerateQuestionDto {
 
     public void setQuestion(String question) {
         this.question = question;
+    }
+
+    public String getGenerateId() {
+        return generateId;
+    }
+
+    public void setGenerateId(String generateId) {
+        this.generateId = generateId;
     }
 
     public Integer getQuestionNum() {

@@ -13,7 +13,7 @@ spring:
       ddl-auto: update
   ai:
     openai:
-        api-key: sk-fogsdnpkrodjjpjikuajwodhorolqbajuvvnxqcwrqqfnkbg
+        api-key: ${SPRING_AI_OPENAI_API_KEY}  #<-- Set your OpenAI API key here
         base-url: https://api.siliconflow.cn
         chat:
           options:
