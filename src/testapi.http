@@ -33,10 +33,10 @@ Content-Type: application/json
 
 {
   "question": "java",
-  "questionNum": 10
+  "questionNum": 1
 }
 
 ###
 
-@generateId=5c2d9439-c260-42e6-bd29-20fc818d5df4
+@generateId=24c89832-5be0-4df9-9210-86b9487c8e99
 GET http://localhost:8080/question/question/{{generateId}}

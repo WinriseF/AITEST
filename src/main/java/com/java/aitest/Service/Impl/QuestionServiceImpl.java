@@ -48,7 +48,7 @@ public class QuestionServiceImpl implements QuestionService {
         // 返回一个 Future 对象，表示异步操作的结果
         String content = chatClient.prompt()
                 .system("你是一个精通各行各业的专家，擅长针对各行各业进行出题，考试，题目解析等。")
-                .user("帮我出" + questionDto.getQuestionNum() + "道" + questionDto.getQuestion() + "的题目，" + questionDto.getQuestionFormat())
+                .user("帮我出" + questionDto.getQuestionNum() + "道" + questionDto.getQuestion() + "的题目，难度要求为" +questionDto.getDifficulty() + questionDto.getQuestionFormat())
                 .call()
                 .content();
         content = content.replaceAll("```json", "").replace("```", "");
