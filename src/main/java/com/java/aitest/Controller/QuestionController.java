@@ -45,12 +45,18 @@ public class QuestionController {
         return content;
     }
 
-    @PostMapping("asyncGenerateQuestion") // 这是方法上的url映射路径
-    public Result asyncGenerateQuestion(@RequestBody GenerateQuestionDto QuestionDto){
-        String uuid = UUID.randomUUID().toString();
-        questionService.GenerateQuestion(QuestionDto,uuid);
-        return Result.success("题目生成请求已提交", uuid);
+    @PostMapping("asyncGenerateQuestion")
+    public Result asyncGenerateQuestion(@RequestBody GenerateQuestionDto questionDto){
+        String generateId = questionDto.getGenerateId();
+        if (generateId == null || generateId.isEmpty()) {
+            generateId = UUID.randomUUID().toString();
+        }
+        // 将这个确定的ID传递给服务层，启动一个异步的生成任务
+        questionService.GenerateQuestion(questionDto, generateId);
+        // 将这个批次ID返回给前端，以便前端可以根据此ID轮询结果
+        return Result.success("题目生成请求已提交", generateId);
     }
+
     @GetMapping("question/{generateId}")
     public Result<List<QuestionVo>> getQuestionByGenerateId(@PathVariable("generateId") String generateId) {
         List<QuestionVo> questionVos = questionService.getQuestionByGenerateId(generateId);
