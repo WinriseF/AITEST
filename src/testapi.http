@@ -11,7 +11,7 @@ GET http://localhost:8080/chat/chat?msg={{msg}}
 ###
 
 # @prompt msg
-GET http://localhost:8080/chat/streamChat?msg={{msg}}
+GET http://localhost:8080/chat/streamChat?msg={"你好"}
 
 
 ### QuestionController

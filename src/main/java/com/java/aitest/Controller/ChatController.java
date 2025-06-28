@@ -1,11 +1,9 @@
 package com.java.aitest.Controller;
 
+import com.java.aitest.Dto.GenerateQuestionDto;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 @RestController
@@ -13,9 +11,11 @@ import reactor.core.publisher.Flux;
 public class ChatController {
     @Autowired // 自动根据类型从容器中去获取对应的对象并注入到这个变量中
     ChatClient chatClient;
-    @GetMapping("/chat") //这是方法上的url映射路径
-    public String chat(@RequestParam("msg") String msg){
-        return chatClient.prompt().user(msg).call().content();
+    @PostMapping("/simpleChat")
+    public String simpleChat(@RequestBody GenerateQuestionDto request) {
+        String msg = request.getMsg();
+        String aiResponse = chatClient.prompt().user(msg).call().content();
+        return aiResponse;
     }
     @GetMapping(value = "streamChat",produces = "text/html;charset=utf-8")
     public Flux<String> streamChat(@RequestParam("msg") String msg){
