@@ -6,6 +6,7 @@ public class GenerateQuestionDto {
     private String generateId;
     private String difficulty; // 题目难度
     private String msg;
+    private String category;
     private String questionFormat = "题型为单选题，题目要求是选择题。题目要求包含题干，选项，正确答案和解析，响应的内容以json的方式进行响应，格式要求如下[\n" +
             "\t{\n" +
             "\t\tquestion:string,\n" +
@@ -66,5 +67,13 @@ public class GenerateQuestionDto {
     public void setMsg(String msg) {
         this.msg = msg;
 
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
