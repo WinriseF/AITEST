@@ -1,13 +1,14 @@
 package com.java.aitest.Service.Impl;
 
 import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.java.aitest.Dao.QuestionDao;
 import com.java.aitest.Dto.GenerateQuestionDto;
+import com.java.aitest.Dao.QuizSetDao;
+import com.java.aitest.Entity.QuizSet;
 import com.java.aitest.Entity.QuestionEntity;
 import com.java.aitest.Service.QuestionService;
 import com.java.aitest.Vo.QuestionVo;
+import jakarta.transaction.Transactional;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class QuestionServiceImpl implements QuestionService {
     QuestionDao questionDao;
 
     @Autowired
+    QuizSetDao quizSetDao;
+
+    @Autowired
     ChatClient chatClient;
 
     @Override
@@ -42,6 +46,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Async
+    @Transactional
     public Future<Boolean> GenerateQuestion(GenerateQuestionDto questionDto, String uuid) {
         // 实现生成问题的逻辑
         // 这里可以调用相关的服务或方法来生成问题
