@@ -3,8 +3,6 @@ package com.java.aitest.Service.Impl;
 import com.alibaba.fastjson.JSON;
 import com.java.aitest.Dao.QuestionDao;
 import com.java.aitest.Dto.GenerateQuestionDto;
-import com.java.aitest.Dao.QuizSetDao;
-import com.java.aitest.Entity.QuizSet;
 import com.java.aitest.Entity.QuestionEntity;
 import com.java.aitest.Service.QuestionService;
 import com.java.aitest.Vo.QuestionVo;
@@ -29,9 +27,6 @@ import java.util.concurrent.Future;
 public class QuestionServiceImpl implements QuestionService {
     @Autowired
     QuestionDao questionDao;
-
-    @Autowired
-    QuizSetDao quizSetDao;
 
     @Autowired
     ChatClient chatClient;

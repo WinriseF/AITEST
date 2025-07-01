@@ -1,7 +1,6 @@
 package com.java.aitest.Entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 /**
  * @author Winrisef
@@ -11,7 +10,6 @@ import lombok.Data;
  */
 @Entity
 @Table(name = "questions") // 数据库表名
-@Data
 public class QuestionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 主键自增

@@ -5,7 +5,7 @@ public class GenerateQuestionDto {
     private Integer questionNum; // 题目数量
     private String generateId;
     private String difficulty; // 题目难度
-    private String msg;
+    private String msg; //单独的chat使用
     private String category;    //题目细分小标题
     private String questionFormat = "题型为单选题，题目要求是选择题。题目要求包含题干，选项，正确答案和解析，响应的内容以json的方式进行响应，格式要求如下[\n" +
             "\t{\n" +

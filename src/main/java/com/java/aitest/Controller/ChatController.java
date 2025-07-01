@@ -14,8 +14,7 @@ public class ChatController {
     @PostMapping("/simpleChat")
     public String simpleChat(@RequestBody GenerateQuestionDto request) {
         String msg = request.getMsg();
-        String aiResponse = chatClient.prompt().user(msg).call().content();
-        return aiResponse;
+        return chatClient.prompt().user(msg).call().content();
     }
     @GetMapping(value = "streamChat",produces = "text/html;charset=utf-8")
     public Flux<String> streamChat(@RequestParam("msg") String msg){
