@@ -1,5 +1,5 @@
 ## 鸿蒙开发后端文档
-
+前端代码参考 [https://github.com/WinriseF/AITESTH.git](https://github.com/WinriseF/AITESTH.git)
 ### Config
 ChatConfig 是一个配置类，用于存储和管理聊天相关的配置项
 
