@@ -40,3 +40,68 @@ Content-Type: application/json
 
 @generateId=24c89832-5be0-4df9-9210-86b9487c8e99
 GET http://localhost:8080/question/question/{{generateId}}
+
+
+
+
+### =================================================================
+### 注册一个新用户
+### =================================================================
+# @name registerUser
+POST http://localhost:8080/user/register
+Content-Type: application/json
+
+{
+  "username": "testuser1",
+  "password": "password123",
+  "email": "testuser1@example.com"
+}
+
+### =================================================================
+### 使用刚才注册的用户登录
+### =================================================================
+# @name loginUser
+# 此请求成功后，会返回一个JWT。
+# REST客户端会自动捕获这个Token，并存入名为 "token" 的变量中。
+POST http://localhost:8080/user/login
+Content-Type: application/json
+
+{
+  "username": "testuser1",
+  "password": "password123"
+}
+
+> {%
+    client.global.set("token", response.body);
+%}
+
+### =================================================================
+### 访问受保护的接口（生成题目）
+### =================================================================
+# @name generateQuestions
+# 这个请求将使用上面登录获取到的 @token 变量。
+# 在 Authorization 头中，我们使用 "Bearer {{token}}" 的格式来发送JWT。
+POST http://localhost:8080/question/asyncGenerateQuestion
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "question": "Java多线程",
+  "questionNum": 5,
+  "difficulty": "中等"
+}
+
+### =================================================================
+### (测试) 不带Token访问受保护接口 (预期失败)
+### =================================================================
+# @name generateQuestionsNoAuth
+# 这个请求没有 Authorization 头，预期会收到 403 Forbidden 错误。
+POST http://localhost:8080/question/asyncGenerateQuestion
+Content-Type: application/json
+
+{
+  "question": "Java并发",
+  "questionNum": 2,
+  "difficulty": "困难",
+  "category": "编程进阶"
+}
