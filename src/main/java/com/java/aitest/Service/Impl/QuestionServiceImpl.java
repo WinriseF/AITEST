@@ -51,7 +51,9 @@ public class QuestionServiceImpl implements QuestionService {
                 .user("帮我出" + questionDto.getQuestionNum() + "道" + questionDto.getQuestion() + "的题目，难度要求为" +questionDto.getDifficulty() + questionDto.getQuestionFormat())
                 .call()
                 .content();
-        content = content.replaceAll("```json", "").replace("```", "");
+        if (content != null) {
+            content = content.replaceAll("```json", "").replace("```", "");
+        }
         List<QuestionEntity> questionEntities = JSON.parseArray(content, QuestionEntity.class);
         questionEntities.forEach(questionEntity -> questionEntity.setGenerateId(uuid));
         saveQuestion(questionEntities);

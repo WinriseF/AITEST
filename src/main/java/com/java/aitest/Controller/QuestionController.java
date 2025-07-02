@@ -24,12 +24,6 @@ public class QuestionController {
     @Autowired
     QuestionService questionService;
 
-    /**
-     * 生成题目
-     * @param QuestionDto
-     * @return
-     * @throws JsonProcessingException
-     */
     @PostMapping("generateQuestion") // 这是方法上的url映射路径
     public String question(@RequestBody GenerateQuestionDto QuestionDto) throws JsonProcessingException {
         String content = chatClient.prompt()
@@ -37,11 +31,14 @@ public class QuestionController {
                 .user("帮我出" + QuestionDto.getQuestionNum() + "道" + QuestionDto.getQuestion() + "的题目，" + QuestionDto.getQuestionFormat())
                 .call()
                 .content();
-        content = content.replaceAll("```json", "").replace("```", "");
+        if (content != null) {
+            content = content.replaceAll("```json", "").replace("```", "");
+        }
         ObjectMapper mapper = new ObjectMapper();
-        List<QuestionEntity> questionEntities = mapper.readValue(content, new TypeReference<List<QuestionEntity>>() {});
+        List<QuestionEntity> questionEntities = mapper.readValue(content, new TypeReference<>() {
+        });
 
-        Boolean bool = questionService.saveQuestion(questionEntities);
+        questionService.saveQuestion(questionEntities);
         return content;
     }
 

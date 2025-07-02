@@ -22,14 +22,14 @@ public class ExceptionController {
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result<String> handleIllegalArgumentException(IllegalArgumentException e) {
-        logger.warn("用户传参错误: " + e.getMessage());
+        logger.warn("用户传参错误: {}", e.getMessage());
         return Result.fail(e.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result<String> handleException(RuntimeException e) {
-        logger.error("服务器内部错误: " + e.getMessage(), e);
+        logger.error("服务器内部错误: {}", e.getMessage(), e);
         return Result.fail("服务器内部错误，请稍后再试");
     }
 }
