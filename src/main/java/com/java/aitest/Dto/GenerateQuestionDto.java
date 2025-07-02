@@ -1,5 +1,8 @@
 package com.java.aitest.Dto;
 
+import lombok.Data;
+
+@Data
 public class GenerateQuestionDto {
     private String question;// 题目大标题
     private Integer questionNum; // 题目数量
@@ -19,61 +22,4 @@ public class GenerateQuestionDto {
             "\t\t\n" +
             "\t}\n" +
             "],要求响应格式中的属性名严格按照规范进行响应";
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public String getGenerateId() {
-        return generateId;
-    }
-
-    public void setGenerateId(String generateId) {
-        this.generateId = generateId;
-    }
-
-    public Integer getQuestionNum() {
-        return questionNum;
-    }
-
-    public void setQuestionNum(Integer questionNum) {
-        this.questionNum = questionNum;
-    }
-
-    public String getQuestionFormat() {
-        return questionFormat;
-    }
-
-    public void setQuestionFormat(String questionFormat) {
-        this.questionFormat = questionFormat;
-    }
-
-    public String getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(String difficulty) {
-        this.difficulty = difficulty;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
 }
