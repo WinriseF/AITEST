@@ -5,6 +5,9 @@ ChatConfig 是一个配置类，用于存储和管理聊天相关的配置项
 
 TaskPoolConfig 自定义线程池配置类，用于管理任务执行的线程池,将耗时任务从主请求线程中剥离，交给一个独立的后台线程池去执行
 
+SecurityConfig 使用JWT来实现基于token的认证和授权
+
+JwtAuthenticationFilter 继承自OncePerRequestFilter，用于在每次请求时验证JWT的有效性
 ### Controller
 ChatController 作为应用程序的web入口，处理请求并提供与大模型的交互，提供两种请求方式：普通和流式
 

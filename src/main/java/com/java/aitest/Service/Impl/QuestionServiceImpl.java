@@ -11,10 +11,10 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 /**
@@ -55,7 +55,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<QuestionEntity> questionEntities = JSON.parseArray(content, QuestionEntity.class);
         questionEntities.forEach(questionEntity -> questionEntity.setGenerateId(uuid));
         saveQuestion(questionEntities);
-        return AsyncResult.forValue(true); // 需要实现具体的异步逻辑
+        return CompletableFuture.completedFuture(true);
     }
 
     @Override
@@ -64,11 +64,10 @@ public class QuestionServiceImpl implements QuestionService {
         if(questionEntities == null || questionEntities.isEmpty()){
             throw new RuntimeException("没有找到对应的题目");
         }
-        List<QuestionVo> list = questionEntities.stream().map(item -> {
+        return questionEntities.stream().map(item -> {
             QuestionVo questionVo = new QuestionVo();
             BeanUtils.copyProperties(item, questionVo);
             return questionVo;
         }).toList();
-        return list;
     }
 }

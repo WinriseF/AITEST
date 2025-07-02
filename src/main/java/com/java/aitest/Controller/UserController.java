@@ -5,7 +5,7 @@ import com.java.aitest.Dto.UserRegistrationDto;
 import com.java.aitest.Entity.User;
 import com.java.aitest.Service.UserService;
 import com.java.aitest.Vo.Result;
-import com.java.aitest.util.JwtUtil; // 引入JwtUtil
+import com.java.aitest.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,16 +25,16 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {//安全过滤器
         http
-                .csrf(csrf -> csrf.disable()) // 禁用CSRF
+                .csrf(AbstractHttpConfigurer::disable) // 禁用CSRF
                 .authorizeHttpRequests(authz -> authz
-                        // 明确放行用户注册和登录接口
+                        // 放行用户注册和登录接口
                         .requestMatchers("/user/register", "/user/login").permitAll()
                         // 其他所有接口，都需要认证
                         .anyRequest().authenticated()
                 )
-                // 配置Session管理策略为无状态（STATELESS），因为我们使用JWT
+                // 配置Session管理策略为无状态
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         // 将我们的JWT过滤器添加到Spring Security的过滤器链中，

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users") // 指定数据库表名为 'users'
+@Table(name = "users") // 指定数据库表名
 public class User {
 
     @Id
@@ -27,7 +27,6 @@ public class User {
         createdAt = LocalDateTime.now();
     }
 
-    // --- Getters and Setters ---
 
     public Long getId() {
         return id;
