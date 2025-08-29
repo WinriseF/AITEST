@@ -37,7 +37,7 @@ public class SecurityConfig {
                 // 配置Session管理策略为无状态
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        // 将我们的JWT过滤器添加到Spring Security的过滤器链中，
+        // JWT过滤器添加到Spring Security的过滤器链中，
         // 放在 UsernamePasswordAuthenticationFilter 之前执行
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

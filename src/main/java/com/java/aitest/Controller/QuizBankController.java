@@ -1,7 +1,7 @@
 package com.java.aitest.Controller;
 
 import com.java.aitest.Dao.QuizSetDao;
-import com.java.aitest.Dto.GenerateQuestionDto; // 引入您正在查看的DTO
+import com.java.aitest.Dto.GenerateQuestionDto;
 import com.java.aitest.Entity.QuizSet;
 import com.java.aitest.Vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
